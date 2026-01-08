@@ -28,7 +28,10 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // 서버에 인증정보 저장을 하지 않으므로
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/test").permitAll() // requestMatchers: 특정 url 패턴 지정
+                        .requestMatchers(
+                                "/test",
+                                "/auth/signup"
+                                ).permitAll() // requestMatchers: 특정 url 패턴 지정
                         .anyRequest().authenticated()) // 그 외
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
