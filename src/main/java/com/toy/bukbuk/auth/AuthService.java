@@ -12,14 +12,14 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void signup(SignupRequestDto signupRequest) {
+    public void signup(SignupRequestDto request) {
         //  Check for duplicate email
-        if(userRepository.existsByEmail(signupRequest.getEmail())) {
+        if(userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
-        String encodedPasswd = passwordEncoder.encode(signupRequest.getPassword());
-        User user = new User(signupRequest.getEmail(), encodedPasswd);
+        String encodedPasswd = passwordEncoder.encode(request.getPassword());
+        User user = new User(request.getEmail(), encodedPasswd);
 
         userRepository.save(user);
     }
