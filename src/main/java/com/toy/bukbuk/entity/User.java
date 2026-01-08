@@ -33,6 +33,11 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public User(String email, String encodedPasswd) {
+        this.email = email;
+        this.password = encodedPasswd;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_")); // role 설정 x
