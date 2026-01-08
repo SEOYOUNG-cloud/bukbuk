@@ -1,28 +1,26 @@
 package com.toy.bukbuk.auth;
 
-import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import com.toy.bukbuk.entity.User;
+import com.toy.bukbuk.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthService {
-    private final JwtUtil jwtUtil;
-    private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
 
-    public LoginResponseDto login(LoginRequestDto loginRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
-        String token = jwtUtil.generateToken(userDetails);
+    public void signup(SignupRequestDto signupRequest) {
+        //  Check for duplicate email
+        if(userRepository.existsByEmail(signupRequest.getEmail())) {
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        }
 
-        return new LoginResponseDto(token);
+        String encodedPasswd = passwordEncoder.encode(signupRequest.getPassword());
+        User user = new User(signupRequest.getEmail(), encodedPasswd);
+
+        userRepository.save(user);
     }
-
-
 }
