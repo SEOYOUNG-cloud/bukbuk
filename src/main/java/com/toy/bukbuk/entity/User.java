@@ -25,6 +25,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     @CreatedDate
     @Column(name = "created_at")
     private LocalDateTime createdAt;
