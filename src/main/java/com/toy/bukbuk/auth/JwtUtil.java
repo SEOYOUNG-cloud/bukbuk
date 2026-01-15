@@ -1,5 +1,6 @@
 package com.toy.bukbuk.auth;
 
+import com.toy.bukbuk.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -24,17 +25,26 @@ public class JwtUtil {
     @Value("${jwt.access_expiration}")
     private int accessExpiration;
 
-    public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
-    }
-    public String createToken(Map<String, Object> claims, String subject) {
+    @Value("${jwt.refresh_expiration}")
+    private int refreshExpiration;
+
+    public String generateAccessToken(User user) {
         return Jwts.builder()
-                .claims(claims)
-                .subject(subject)
+                .subject(user.getEmail())
+                .claim("id", user.getId())
+                .claim("role", user.getAuthorities())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + accessExpiration))
-                .signWith(getSigningKey())  // SignatureAlgorithm 생략
+                .signWith(getSigningKey())
+                .compact();
+    }
+
+    public String generateRefreshToken(User user) {
+        return Jwts.builder()
+                .subject(user.getEmail())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
+                .signWith(getSigningKey())
                 .compact();
     }
 
@@ -69,9 +79,6 @@ public class JwtUtil {
             throw e;
         } catch (MalformedJwtException e) {
             log.error("Malformed JWT token: {}", e.getMessage());
-            throw e;
-        } catch (SignatureException e) {
-            log.error("Invalid JWT signature: {}", e.getMessage());
             throw e;
         } catch (IllegalArgumentException e) {
             log.error("JWT token compact of handler are invalid: {}", e.getMessage());
