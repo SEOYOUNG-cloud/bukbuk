@@ -15,7 +15,7 @@ public enum ErrorCode {
     ),
 
     USER_NOT_FOUND(
-      HttpStatus.NOT_FOUND,
+      HttpStatus.UNAUTHORIZED,
       "USER_NOT_FOUND",
       "존재하지 않는 유저입니다."
     );
