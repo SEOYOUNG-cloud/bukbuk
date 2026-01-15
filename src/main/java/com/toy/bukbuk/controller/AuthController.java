@@ -1,6 +1,8 @@
 package com.toy.bukbuk.controller;
 
 import com.toy.bukbuk.auth.AuthService;
+import com.toy.bukbuk.auth.LoginRequestDto;
+import com.toy.bukbuk.auth.LoginResponseDto;
 import com.toy.bukbuk.auth.SignupRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,5 +23,10 @@ public class AuthController {
         authService.signup(request);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 }
