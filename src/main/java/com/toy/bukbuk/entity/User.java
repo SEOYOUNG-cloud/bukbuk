@@ -2,6 +2,7 @@ package com.toy.bukbuk.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Cascade;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class User implements UserDetails {
     @Id @GeneratedValue
     private Long id;
@@ -49,5 +51,13 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return this.email;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void clearRefreshToken() {
+        this.refreshToken = null;
     }
 }
