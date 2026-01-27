@@ -24,6 +24,7 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
+    private static final String JWT_EXCEPTION_ATTRIBUTE = "JWT_EXCEPTION";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -33,16 +34,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             authenticateIfPossible(request);
         } catch (UsernameNotFoundException e) {
             log.warn("User not found: {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            request.setAttribute(JWT_EXCEPTION_ATTRIBUTE, e);
         } catch (ExpiredJwtException e) {
             log.warn("JWT token expired: {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            request.setAttribute(JWT_EXCEPTION_ATTRIBUTE, e);
         } catch (JwtException e) {
             log.warn("Invalid JWT token: {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            request.setAttribute(JWT_EXCEPTION_ATTRIBUTE, e);
         } catch (Exception e) {
             log.error("Authentication error: {}", e.getMessage());
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            request.setAttribute(JWT_EXCEPTION_ATTRIBUTE, e);
         }
 
         filterChain.doFilter(request, response);
