@@ -8,4 +8,8 @@ import lombok.Getter;
 public class ErrorResponseDto {
     private String code;
     private String message;
+
+    public static ErrorResponseDto from(ErrorCode errorCode) {
+        return new ErrorResponseDto(errorCode.getCode(), errorCode.getMessage());
+    }
 }
