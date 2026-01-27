@@ -24,16 +24,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // 서버에 인증정보 저장을 하지 않으므로
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/test",
-                                "/auth/signup"
+                                "/auth/*"
                                 ).permitAll() // requestMatchers: 특정 url 패턴 지정
                         .anyRequest().authenticated()) // 그 외
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(e -> e.authenticationEntryPoint(jwtAuthenticationEntryPoint));
 
         return http.build();
     }
